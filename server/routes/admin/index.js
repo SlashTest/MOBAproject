@@ -25,18 +25,7 @@ module.exports = app => {
         res.send({ success: true })
     })
     //资源列表
-    router.get('/', async (req, res, next) => {
-        const token = String(req.headers.authorization|| '').split(' ').pop()
-        assert(token,401,'请先登录')
-
-        const { id } = jwt.verify(token,app.get('secret'))
-        assert(id,401,'请先登录')
-
-        req.user = await AdminUser.findById(id)
-        assert(req.user,401,'请先登录')
-        
-        await next()
-    }, async (req, res) => {
+    router.get('/', async (req, res) => {
         const queryOptions = {}
         if (req.Model.modelName === 'Category') {
             queryOptions.populate = 'parent'
@@ -49,15 +38,26 @@ module.exports = app => {
         const model = await req.Model.findById(req.params.id)
         res.send(model)
     })
-    app.use('/admin/api/rest/:resource', async (req, res, next) => {
-        const modelName = require('inflection').classify(req.params.resource)
-        req.Model = require(`../../models/${modelName}`)
-        next()
-    }, router)
+    //登陆校验中间件
+    const authMiddleware = require('../../middleware/auth')
+    //获取模型中间件
+   const resourceMiddleware = require('../../middleware/resource')
+    app.use('/admin/api/rest/:resource', authMiddleware(),resourceMiddleware(), router)
 
     const multer = require('multer')
     const upload = multer({ dest: __dirname + '/../../uploads' })
-    app.post('/admin/api/upload', upload.single('file'), async (req, res) => {
+    app.post('/admin/api/upload',authMiddleware() ,async (req, res, next) => {
+        const token = String(req.headers.authorization|| '').split(' ').pop()
+        assert(token,401,'请先登录')
+
+        const { id } = jwt.verify(token,app.get('secret'))
+        assert(id,401,'请先登录')
+
+        req.user = await AdminUser.findById(id)
+        assert(req.user,401,'请先登录')
+        
+        await next()
+    }, upload.single('file'), async (req, res) => {
         const file = req.file
         file.url = `http://localhost:3000/uploads/${file.filename}`
         res.send(file)
