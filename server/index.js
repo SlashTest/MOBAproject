@@ -2,6 +2,7 @@ const express = require("express")
 
 const app = express()
 
+app.set('secret','asdasdasdasd213asd12e')
 
 app.use(require('cors')())
 
