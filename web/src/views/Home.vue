@@ -106,12 +106,25 @@
     </m-card> -->
     <m-list-card icon="cc-menu-circle" title="新闻资讯" :categories="newsCats">
       <template #items="{category}">
-        <div class="py-2" v-for="(news,i) in category.newsList" :key="i">
-        <span>[{{news.categoryName}}]</span>
-        <span>|</span>
-        <span>{{news.title}}</span>
-        <span>{{news.date}}</span>
+        <div class="py-2 fs-lg d-flex" v-for="(news,i) in category.newsList" :key="i">
+        <span class="text-info">[{{news.categoryName}}]</span>
+        <span class="px-2">|</span>
+        <span class="flex-1 text-dark-1 text-ellipse pr-2">{{news.title}}</span>
+        <span class="text-grey-1 fs-sm">{{news.createdAt | date}}</span>
       </div>
+      </template>
+      
+    </m-list-card>
+    <m-list-card icon="superhero-
+" title="英雄列表" :categories="heroCats">
+      <template #items="{category}">
+        <div class="d-flex flex-wrap" style="margin:0 -0.5rem">
+          <div class="p-2 text-center" style="width:20%;" v-for="(hero,i) in category.heroList" :key="i">
+          <img :src="hero.avatar" class="w-100">
+          <div>{{hero.name}}</div>
+        </div>
+        </div>
+        
       </template>
       
     </m-list-card>
@@ -125,7 +138,13 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
+  filters:{
+    date(val){
+      return dayjs(val).format('MM/DD')
+    }
+  },
   data() {
     return {
       swiperOptions: {
@@ -134,50 +153,26 @@ export default {
           },
           // Some Swiper option/callback...
         },
-    newsCats:[
-      {
-        name:"热门",
-        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
-            categoryName:'公告',
-            title:'9月2日净化游戏环境声明及处罚公告',
-            date:'09/02'
-          }))
-      },
-      {
-        name:"新闻",
-        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
-            categoryName:'新闻',
-            title:'稷下学院突现神秘卡片，受到伤害后竟……',
-            date:'09/01'
-          }))
-      },
-      {
-        name:"公告",
-        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
-            categoryName:'公告',
-            title:'9月2日净化游戏环境声明及处罚公告',
-            date:'09/02'
-          }))
-      },
-      {
-        name:"活动",
-        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
-            categoryName:'活动',
-            title:'英雄专属梦境限时开启，白露时节好礼来袭',
-            date:'08/31'
-          }))
-      },
-      {
-        name:"赛事",
-        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
-            categoryName:'赛事',
-            title:'2020年KGL秋季赛选手大名单公布，9月13日该我上场！',
-            date:'09/01'
-          }))
-      },
-    ]
+    newsCats:[],
+    heroCats:[],
+
     };
   },
+  methods: {
+    async fetchNewsCats(){
+      const res = await this.$http.get('news/list')
+      this.newsCats = res.data
+    },
+    async fetchHeroCats(){
+      const res = await this.$http.get('heroes/list')
+      this.heroCats = res.data
+    }
+  },
+  created(){
+    this.fetchNewsCats()
+    this.fetchHeroCats()
+
+  }
 }
 </script>
 
