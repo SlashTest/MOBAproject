@@ -70,9 +70,57 @@
       </div>
     </div>
     <!-- end of nav icons -->
+    <!-- <m-card icon="cc-menu-circle" title="新闻资讯">
 
+        <div class="nav jc-between">
+          <div class="nav-item active">
+            <div class="nav-link active">热门</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-link">新闻</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-link">公告</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-link">活动</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-link">赛事</div>
+          </div>
+        </div>
 
-    <i class="iconfont icon-cc-menu-circle"></i> 
+        <div class="pt-3">
+            <swiper>
+            <swiper-slide  v-for="m in 5" :key ="m">
+              <div class="py-2" v-for="n in 5" :key="n">
+                <span>[新闻]</span>
+                <span>|</span>
+                <span>稷下学院突现神秘卡片，受到伤害后竟……</span>
+
+                <span>09/1</span>
+              </div>
+            </swiper-slide>
+          </swiper>
+        </div>
+    </m-card> -->
+    <m-list-card icon="cc-menu-circle" title="新闻资讯" :categories="newsCats">
+      <template #items="{category}">
+        <div class="py-2" v-for="(news,i) in category.newsList" :key="i">
+        <span>[{{news.categoryName}}]</span>
+        <span>|</span>
+        <span>{{news.title}}</span>
+        <span>{{news.date}}</span>
+      </div>
+      </template>
+      
+    </m-list-card>
+    <m-card icon="cc-menu-circle" title="英雄列表"></m-card>
+    <m-card icon="cc-menu-circle" title="精彩视频"></m-card>
+    <m-card icon="cc-menu-circle" title="新闻资讯"></m-card>
+    <m-card icon="cc-menu-circle" title="新闻资讯"></m-card>
+    
+  
   </div>
 </template>
 
@@ -85,8 +133,50 @@ export default {
             el: '.pagination-home'
           },
           // Some Swiper option/callback...
-        }
-    }
+        },
+    newsCats:[
+      {
+        name:"热门",
+        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
+            categoryName:'公告',
+            title:'9月2日净化游戏环境声明及处罚公告',
+            date:'09/02'
+          }))
+      },
+      {
+        name:"新闻",
+        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
+            categoryName:'新闻',
+            title:'稷下学院突现神秘卡片，受到伤害后竟……',
+            date:'09/01'
+          }))
+      },
+      {
+        name:"公告",
+        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
+            categoryName:'公告',
+            title:'9月2日净化游戏环境声明及处罚公告',
+            date:'09/02'
+          }))
+      },
+      {
+        name:"活动",
+        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
+            categoryName:'活动',
+            title:'英雄专属梦境限时开启，白露时节好礼来袭',
+            date:'08/31'
+          }))
+      },
+      {
+        name:"赛事",
+        newsList:new Array(5).fill({}).map(v => ({ // eslint-disable-line no-unused-vars
+            categoryName:'赛事',
+            title:'2020年KGL秋季赛选手大名单公布，9月13日该我上场！',
+            date:'09/01'
+          }))
+      },
+    ]
+    };
   },
 }
 </script>
